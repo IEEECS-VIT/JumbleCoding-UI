@@ -39,6 +39,8 @@
             // 
             // InputBox
             // 
+            this.InputBox.AcceptsReturn = true;
+            this.InputBox.AcceptsTab = true;
             this.InputBox.Font = new System.Drawing.Font("Calibri", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.InputBox.Location = new System.Drawing.Point(12, 67);
             this.InputBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -51,6 +53,8 @@
             // 
             // DisplayBox
             // 
+            this.DisplayBox.AcceptsReturn = true;
+            this.DisplayBox.AcceptsTab = true;
             this.DisplayBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.DisplayBox.Font = new System.Drawing.Font("Calibri", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DisplayBox.Location = new System.Drawing.Point(538, 68);

@@ -11,15 +11,18 @@ namespace JumbleCoding
     {
 
         private Timer countDown = new Timer();
-        // Edit duration of the timer here: (hours, minutes, seconds).
-        private TimeSpan TimeRemaining = new TimeSpan(0, 0, 30);
+        private TimeSpan TimeRemaining;
+        private TimeSpan timeStarted, timeEnded;
 
-        public JumbleCodingUI()
+        public JumbleCodingUI(TimeSpan maxTime)
         {
             InitializeComponent();
             this.DesktopBounds = new Rectangle(new Point(0, 0), new Size(Window.Width, Window.Height));
             this.Load += JumbleCodingUI_Load;
             this.FormClosed += JumbleCodingUI_FormClosed;
+
+            timeStarted = (DateTime.Now).TimeOfDay;
+            this.TimeRemaining = maxTime;
 
             this.InputBox.Width = (int)(Window.Width * 0.45);
             this.InputBox.Height = (int)(Window.Height * 0.6);
@@ -48,7 +51,7 @@ namespace JumbleCoding
 
             TimeDisplayLabel.Left = this.TimerHeaderLabel.Right;
             TimeDisplayLabel.Top = this.TimerHeaderLabel.Top;
-            TimeDisplayLabel.Text = StringFormat(TimeRemaining);
+            TimeDisplayLabel.Text = Util.FormatToString(TimeRemaining);
 
         }
 
@@ -65,14 +68,10 @@ namespace JumbleCoding
             countDown.Start();
         }
 
-        private string StringFormat(TimeSpan T)
-        {
-            return (T.Hours.ToString() + " : " + T.Minutes.ToString() + " : " + T.Seconds.ToString());
-        }
         private void countDown_Tick(object sender, EventArgs e)
         {
             TimeRemaining = TimeRemaining.Subtract(new TimeSpan(0, 0, 1));
-            this.TimeDisplayLabel.Text = StringFormat(TimeRemaining);
+            this.TimeDisplayLabel.Text = Util.FormatToString(TimeRemaining);
             if (TimeRemaining.CompareTo(new TimeSpan(0)) == 0)
                     SubmitButton.PerformClick();
         }
@@ -82,17 +81,19 @@ namespace JumbleCoding
             Application.Exit();
         }
 
-        // Update DisplayBox by jumbling input - Algorithm for the challenge
+        // Update DisplayBox by jumbling input
         private void InputBox_TextChanged(object sender, EventArgs e)
         {
-            // Write code to jumble display here.
+            // Replace this line with a function call:
+            // DisplayBox.Text = JumbleCodingAlgorithm.GameAlgorithm.Jumble(InputBox.Text);
             DisplayBox.Text = InputBox.Text;
         }
         
         private void SubmitButton_Click(object sender, EventArgs e)
         {
             countDown.Stop();
-            Manager.CodeSubmitted(DisplayBox.Text);
+            timeEnded = (DateTime.Now).TimeOfDay;
+            Manager.CodeSubmitted(DisplayBox.Text, timeStarted, timeEnded);
         }
 
     }

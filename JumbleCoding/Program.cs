@@ -2,10 +2,19 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
-using System.Security.AccessControl;
 
 namespace JumbleCoding
 {
+
+    public static class Util
+    {
+        // Method to format timespan as a string.
+        public static string FormatToString(TimeSpan T)
+        {
+            return (T.Hours.ToString() + " : " + T.Minutes.ToString() + " : " + T.Seconds.ToString());
+        }
+    }
+
     // Static class to automatically detect monitor's resolution and set to height and width fields.
     static class Window
     {
@@ -30,7 +39,7 @@ namespace JumbleCoding
             private set;
             get;
         }
-        private static string submittedCode;
+        private static string submittedText;
 
         public static void LoadLogInPage()
         {
@@ -38,27 +47,33 @@ namespace JumbleCoding
         }
 
         // Method to disable login screen and show UI.
-        public static void LoadUserInterface(string reg)
+        public static void LoadUserInterface(string regNumber)
         {
-            regNo = reg;
+            regNo = regNumber;
             logInForm.Hide();
             logInForm.Enabled = false;
-
-            jumbleCodingUI = new JumbleCodingUI();
+            
+            // Start the game with the passed value of TimeSpan (hours, minutes, seconds).
+            jumbleCodingUI = new JumbleCodingUI(new TimeSpan(1,0,0));
             jumbleCodingUI.ShowDialog();
         }
 
         // Method to disable UI,
         // create and write to text file,
         // display GameOver dialogue Box.
-        public static void CodeSubmitted(string finalCode)
+        public static void CodeSubmitted(string finalText, TimeSpan timeStarted, TimeSpan timeEnded)
         {
             jumbleCodingUI.Enabled = false;
-            submittedCode = finalCode;
+            submittedText = finalText;
 
+            // Writing time taken details and code to file.
             string filePath = @"C:\Windows\Temp\" + regNo + ".txt";
             StreamWriter sw = new StreamWriter(filePath);
-            sw.Write(submittedCode);
+            sw.WriteLine("// Time Started: " + Util.FormatToString(timeStarted));
+            sw.WriteLine("// Time Completed: " + Util.FormatToString(timeEnded));
+            sw.WriteLine("// Total Time taken: " + Util.FormatToString(timeEnded.Subtract(timeStarted)));
+            sw.WriteLine();
+            sw.Write(submittedText);
             sw.Close();
             // Prevent manipulation (to some extent) by making file readonly.
             File.SetAttributes(filePath, FileAttributes.ReadOnly);
@@ -71,7 +86,6 @@ namespace JumbleCoding
 
     static class Program
     {
-
         [STAThread]
         static void Main()
         {
