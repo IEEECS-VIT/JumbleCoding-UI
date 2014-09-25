@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace JumbleCoding
 {
@@ -60,25 +64,86 @@ namespace JumbleCoding
 
         // Method to disable UI,
         // create and write to text file,
+        // Upload file to FTP server if FTP credentials exist
         // display GameOver dialogue Box.
         public static void CodeSubmitted(string finalText, TimeSpan timeStarted, TimeSpan timeEnded)
         {
             jumbleCodingUI.Enabled = false;
             submittedText = finalText;
 
+            string status = "";
             // Writing time taken details and code to file.
             string filePath = @"C:\Windows\Temp\" + regNo + ".txt";
-            StreamWriter sw = new StreamWriter(filePath);
-            sw.WriteLine("// Time Started: " + Util.FormatToString(timeStarted));
-            sw.WriteLine("// Time Completed: " + Util.FormatToString(timeEnded));
-            sw.WriteLine("// Total Time taken: " + Util.FormatToString(timeEnded.Subtract(timeStarted)));
-            sw.WriteLine();
-            sw.Write(submittedText);
-            sw.Close();
-            // Prevent manipulation (to some extent) by making file readonly.
-            File.SetAttributes(filePath, FileAttributes.ReadOnly);
+            if(File.Exists(filePath))
+            {
+                File.SetAttributes(filePath, FileAttributes.Normal);
+                StreamWriter sw = File.AppendText(filePath);
+                sw.WriteLine();
+                sw.WriteLine();
+                sw.WriteLine("// " + regNo);
+                sw.WriteLine("// Second Submission! ");
+                sw.WriteLine("// Time Started: " + Util.FormatToString(timeStarted));
+                sw.WriteLine("// Time Completed: " + Util.FormatToString(timeEnded));
+                sw.WriteLine("// Total Time taken: " + Util.FormatToString(timeEnded.Subtract(timeStarted)));
+                sw.WriteLine();
+                sw.Write(submittedText);
+                sw.Close();
+                status = "Appended to local file";
+                // Prevent manipulation (to some extent) by making file readonly.
+                File.SetAttributes(filePath, FileAttributes.ReadOnly);
+            }
+            else
+            {
+                StreamWriter sw = new StreamWriter(filePath);
+                sw.WriteLine("// " + regNo);
+                sw.WriteLine("// Time Started: " + Util.FormatToString(timeStarted));
+                sw.WriteLine("// Time Completed: " + Util.FormatToString(timeEnded));
+                sw.WriteLine("// Total Time taken: " + Util.FormatToString(timeEnded.Subtract(timeStarted)));
+                sw.WriteLine();
+                sw.Write(submittedText);
+                sw.Close();
+                status = "Saved to local file";
+                // Prevent manipulation (to some extent) by making file readonly.
+                File.SetAttributes(filePath, FileAttributes.ReadOnly);
+            }
 
-            gameOverDialog = new GameOverDialog();
+            string FtpUrl = "";
+            string FtpFolder = "";
+            string FtpUsername = "";
+            string FtpPassword = "";
+            bool credentials = false;
+            
+            if (File.Exists("credentials.json"))
+            {
+                string JsonText = System.IO.File.ReadAllText("credentials.json");
+                JObject json = JsonConvert.DeserializeObject<JObject>(JsonText);
+                FtpUrl = (string)json["FtpUrl"];
+                FtpUsername = (string)json["FtpUsername"];
+                FtpPassword = (string)json["FtpPassword"];
+                credentials = true;
+                
+            }
+            
+            if (credentials)
+            {
+                String uploadUrl = String.Format("{0}/{1}", FtpUrl, regNo + ".txt");
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(uploadUrl));
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+                request.UseBinary = true;
+                request.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
+                StreamReader sourceStream = new StreamReader(filePath);
+                byte[] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
+                sourceStream.Close();
+                request.ContentLength = fileContents.Length;
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(fileContents, 0, fileContents.Length);
+                requestStream.Close();
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+                status = status + " and " + response.StatusDescription;
+                response.Close();
+            }
+
+            gameOverDialog = new GameOverDialog(status);
             gameOverDialog.Show();
         }
 

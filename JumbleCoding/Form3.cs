@@ -9,7 +9,7 @@ namespace JumbleCoding
 {
     public partial class GameOverDialog : Form
     {
-        public GameOverDialog()
+        public GameOverDialog(string status)
         {
             InitializeComponent();
 
@@ -23,7 +23,7 @@ namespace JumbleCoding
             // Edit content for the closing statement here.
             FinalText.Lines = new string[] {
                                             "",
-                                            "Code successfully submitted.",
+                                            status,
                                             "",
                                             "Thank you for taking part! Results will be announced soon."
                                             };

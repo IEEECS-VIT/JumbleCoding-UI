@@ -4,6 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using JumbleCoding_Algorithm;
 
 namespace JumbleCoding
 {
@@ -86,7 +87,7 @@ namespace JumbleCoding
         {
             // Replace this line with a function call:
             // DisplayBox.Text = JumbleCodingAlgorithm.GameAlgorithm.Jumble(InputBox.Text);
-            DisplayBox.Text = InputBox.Text;
+            DisplayBox.Text = Jumbler.Jumble(InputBox.Text);
         }
         
         private void SubmitButton_Click(object sender, EventArgs e)
