@@ -4,8 +4,6 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace JumbleCoding
 {
@@ -58,7 +56,7 @@ namespace JumbleCoding
             logInForm.Enabled = false;
             
             // Start the game with the passed value of TimeSpan (hours, minutes, seconds).
-            jumbleCodingUI = new JumbleCodingUI(new TimeSpan(1,0,0));
+            jumbleCodingUI = new JumbleCodingUI(new TimeSpan(0,45,0));
             jumbleCodingUI.ShowDialog();
         }
 
@@ -105,42 +103,6 @@ namespace JumbleCoding
                 status = "Saved to local file";
                 // Prevent manipulation (to some extent) by making file readonly.
                 File.SetAttributes(filePath, FileAttributes.ReadOnly);
-            }
-
-            string FtpUrl = "";
-            string FtpFolder = "";
-            string FtpUsername = "";
-            string FtpPassword = "";
-            bool credentials = false;
-            
-            if (File.Exists("credentials.json"))
-            {
-                string JsonText = System.IO.File.ReadAllText("credentials.json");
-                JObject json = JsonConvert.DeserializeObject<JObject>(JsonText);
-                FtpUrl = (string)json["FtpUrl"];
-                FtpUsername = (string)json["FtpUsername"];
-                FtpPassword = (string)json["FtpPassword"];
-                credentials = true;
-                
-            }
-            
-            if (credentials)
-            {
-                String uploadUrl = String.Format("{0}/{1}", FtpUrl, regNo + ".txt");
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(uploadUrl));
-                request.Method = WebRequestMethods.Ftp.UploadFile;
-                request.UseBinary = true;
-                request.Credentials = new NetworkCredential(FtpUsername, FtpPassword);
-                StreamReader sourceStream = new StreamReader(filePath);
-                byte[] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
-                sourceStream.Close();
-                request.ContentLength = fileContents.Length;
-                Stream requestStream = request.GetRequestStream();
-                requestStream.Write(fileContents, 0, fileContents.Length);
-                requestStream.Close();
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-                status = status + " and " + response.StatusDescription;
-                response.Close();
             }
 
             gameOverDialog = new GameOverDialog(status);

@@ -27,7 +27,7 @@ namespace JumbleCoding
             DescriptionText.TextAlign = HorizontalAlignment.Center;
             // Edit content for the opening description here.
             DescriptionText.Lines = new string[] {
-                                                 "Enter your registeration number and hit Start to begin. Best of luck!",
+                                                 "Enter your Registration Number and hit Start to begin. Best of luck!",
                                                  "",
                                                  "Warning: The timer will begin as soon as you press start."
                                                  };
@@ -41,7 +41,7 @@ namespace JumbleCoding
 
             this.ErrorMsgLabel.Left = this.InputText.Left;
             this.ErrorMsgLabel.Top = this.InputText.Bottom;
-            this.ErrorMsgLabel.Text = "Invalid Register Number";
+            this.ErrorMsgLabel.Text = "Invalid Registration Number";
 
             this.StartButton.Top = this.InputText.Bottom + (int)(Window.Height * 0.06);
             this.StartButton.Width = (int)(Window.Width * 0.15);
@@ -53,7 +53,7 @@ namespace JumbleCoding
             Application.Exit();
         }
 
-        // Method to verify if inputted registeration number is valid or not.
+        // Method to verify if input Registration number is valid or not.
         private static bool IsValidRegNo(string s)
         {
             if (s.Length != 9)
