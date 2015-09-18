@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JumbleCoding.Managers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,44 +17,49 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
+
 namespace JumbleCoding
 {
 
     public partial class MainWindow : Window
     {
-        private DispatcherTimer Timer;
-        private TimeSpan RemainingTime;
+        private DispatcherTimer Timer { get; set; }
+        private TimeSpan RemainingTime { get; set; }
+        private double _increment;
+
+        public string CurrentPlayerId { get; private set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
+            CurrentPlayerId = GameSession.CurrentPlayer.RegNo;
             Timer = new DispatcherTimer();
             Timer.Tick += Timer_Tick;
             Timer.Interval = new TimeSpan(0, 0, 1);
-            RemainingTime = GameManager.TimeLimit;
+            RemainingTime = GameSession.RoundDetails.TimeLimit;
 
-            DoubleAnimation progressAnimation = new DoubleAnimation(100, new Duration(RemainingTime));
+            _increment = 100 / RemainingTime.TotalSeconds;
             timeDisplayBlock.Text = RemainingTime.ToString();
-
             Timer.Start();
-            progressBar.BeginAnimation(ProgressBar.ValueProperty, progressAnimation);
+
+            this.DataContext = this;
+            Manager.PushToLog(LogEvents.GameStart, GameSession.RoundDetails.RoundNo.ToString());
         }
 
-        void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             RemainingTime = RemainingTime.Subtract(new TimeSpan(0, 0, 1));
             timeDisplayBlock.Text = RemainingTime.ToString();
+            DoubleAnimation progressAnimation = new DoubleAnimation(progressBar.Value + _increment, new Duration(new TimeSpan(0, 0, 1)));
+            progressBar.BeginAnimation(ProgressBar.ValueProperty, progressAnimation);
+
             if (RemainingTime.TotalSeconds == 30)
             {
                 timeDisplayBlock.Foreground = progressBar.Foreground = new SolidColorBrush(Colors.Red);
             }
             if (RemainingTime == TimeSpan.Zero)
             {
-                Timer.Tick -= Timer_Tick;
-                Timer.Stop();
-                submitButton.IsEnabled = false;
-                MessageBox.Show("Well, you've timed out! Your code will be now be submitted.", "Time Up!");
                 SubmitButton_Click(null, null);
             }
         }
@@ -68,12 +74,39 @@ namespace JumbleCoding
 
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            displayTextBox.Text = inputTextBox.Text;
+            displayTextBox.Text = GameSession.RoundDetails.Jumbler(inputTextBox.Text);
         }
 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
+            Timer.Tick -= Timer_Tick;
+            Timer.Stop();
             submitButton.IsEnabled = false;
+            inputTextBox.IsEnabled = false;
+
+            if (RemainingTime == TimeSpan.Zero)
+                finalStatusBlock.Text = "Time's Up!";
+            else
+                finalStatusBlock.Text = "Thank you!";
+            submissionGrid.Visibility = System.Windows.Visibility.Visible;
+
+            try
+            {
+                Manager.PushToLog(LogEvents.Submit, displayTextBox.Text);
+                string submission = GameSession.EndRound(displayTextBox.Text, RemainingTime);
+                // Upload submission via FTP.
+                submitStatusBlock.Foreground = new SolidColorBrush(Colors.LightGreen);
+                submitStatusBlock.Text = "Submission successful.";
+            }
+            catch
+            {
+                submitStatusBlock.Foreground = new SolidColorBrush(Colors.Red);
+                submitStatusBlock.Text = "Submission failed.";
+            }
+            finally
+            {
+                submissionProgressBar.Visibility = Visibility.Hidden;
+            }
         }
 
     }

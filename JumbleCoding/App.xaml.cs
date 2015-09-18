@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JumbleCoding.Managers;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,16 @@ namespace JumbleCoding
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnExit(ExitEventArgs e)
+        {
+            Manager.Finalize();
+            base.OnExit(e);
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            Manager.Initialize();
+            base.OnStartup(e);
+        }
     }
 }

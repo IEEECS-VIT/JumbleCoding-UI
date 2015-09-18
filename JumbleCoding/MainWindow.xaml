@@ -13,20 +13,23 @@
         </ResourceDictionary>
     </Window.Resources>
     
-    <DockPanel>
-    
-        <Border DockPanel.Dock="Top" Padding="10" Background="#FF202020">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <Border Grid.Row="0" Padding="10" Background="#FF202020">
             <Grid>
                 <TextBlock Text="Jumble Coding 2.0" FontSize="20" Foreground="LightSkyBlue" HorizontalAlignment="Center"></TextBlock>
             </Grid>
         </Border>
-    
-        <Border DockPanel.Dock="Bottom">
-            <ProgressBar x:Name="progressBar" Value="0" Height="7"
-                         BorderThickness="0" BorderBrush="Transparent"></ProgressBar>
-        </Border>
+        
+        <ProgressBar x:Name="progressBar" Grid.Row="2" Value="0" Height="7"
+                     BorderThickness="0" BorderBrush="Transparent"></ProgressBar>
 
-        <Grid Margin="30,20,30,30">
+        <Grid Margin="30,20,30,30" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -40,9 +43,8 @@
 
             <TextBlock Grid.Row="0" Foreground="Gray">
             Logged in as:<LineBreak></LineBreak>
-            <Run Text="13BEC0749" FontWeight="Bold" Foreground="Black" FontSize="17"></Run>
+            <Run Text="{Binding CurrentPlayerId}" FontWeight="Bold" Foreground="Black" FontSize="17"></Run>
             </TextBlock>
-
             <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
             <TextBlock Foreground="Gray" FontSize="10" VerticalAlignment="Center" TextAlignment="Right">
                 mouse over<LineBreak></LineBreak>
@@ -51,10 +53,10 @@
                 <Grid>
                     <Grid.ToolTip>
                         <TextBlock>
-                        The code in the right-hand side box is submitted.<LineBreak></LineBreak>
-                        Jumble up the code on the left so it's right on the right!<LineBreak></LineBreak><LineBreak></LineBreak>
-                        Tip: Keep a watch on the timer. There is a countdown bar<LineBreak></LineBreak>
-                        at the bottom that turns red when 30 seconds are left.
+                            The code in the right-hand side box is submitted.<LineBreak></LineBreak>
+                            Jumble up the code on the left so it's right on the right!<LineBreak></LineBreak><LineBreak></LineBreak>
+                            Tip: Keep a watch on the timer. There is a countdown bar<LineBreak></LineBreak>
+                            at the bottom that turns red when 30 seconds are left.
                         </TextBlock>
                     </Grid.ToolTip>
                     <Ellipse Margin="7" Width="25" Height="25" Fill="LightSkyBlue" VerticalAlignment="Center" HorizontalAlignment="Center"></Ellipse>
@@ -62,7 +64,6 @@
                            HorizontalAlignment="Center" FontWeight="Bold"></TextBlock>
                 </Grid>
             </StackPanel>
-            
             <ScrollViewer Grid.Row="2" Margin="0,20,15,20" x:Name="inputScrollViewer"
                           ScrollChanged="ScrollViewer_ScrollChanged">
                 <TextBox x:Name="inputTextBox" TextChanged="InputTextBox_TextChanged"></TextBox>
@@ -73,17 +74,48 @@
                          IsTabStop="False" IsHitTestVisible="False">
                 </TextBox>
             </ScrollViewer>
-
             <StackPanel Orientation="Horizontal" Grid.Row="3">
                 <TextBlock Text="Time left > " VerticalAlignment="Center" FontSize="17" Foreground="Gray"></TextBlock>
                 <TextBlock x:Name="timeDisplayBlock" FontSize="20"></TextBlock>
             </StackPanel>
-
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="3">
                 <TextBlock Text="Done? Click here to upload the code." VerticalAlignment="Center" Foreground="Gray"></TextBlock>
                 <Button Margin="10,0,0,0" Content="  Submit  " x:Name="submitButton" Click="SubmitButton_Click"></Button>
             </StackPanel>
         </Grid>
 
-    </DockPanel>
+        <Grid Grid.RowSpan="3" x:Name="submissionGrid" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border Background="#FF202020" Grid.Row="1" Grid.Column="1">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                        <TextBlock x:Name="finalStatusBlock" FontSize="20" HorizontalAlignment="Center" Foreground="White"></TextBlock>
+                        <TextBlock Margin="10,10,10,0" Foreground="LightGray" TextWrapping="Wrap">
+                            We hope you had a great time. If you face any issues with submission, please inform the coordinators to guide you.<LineBreak></LineBreak>
+                            The results will be announced soon via SMS or call.
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="20,0,20,0">
+                        <TextBlock x:Name="submitStatusBlock" Foreground="Gray" HorizontalAlignment="Center"
+                                   Text="Submitting you code..." Margin="0,0,0,5"></TextBlock>
+                        <ProgressBar IsIndeterminate="True" x:Name="submissionProgressBar"></ProgressBar>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+        
+    </Grid>
 </Window>
