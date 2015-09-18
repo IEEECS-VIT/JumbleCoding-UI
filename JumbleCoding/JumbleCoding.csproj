@@ -53,6 +53,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GameManager.cs" />
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
@@ -60,7 +61,7 @@
     <Compile Include="SpashWindow.xaml.cs">
       <DependentUpon>SpashWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="User.cs" />
+    <Compile Include="Player.cs" />
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

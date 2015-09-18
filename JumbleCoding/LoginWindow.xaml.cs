@@ -23,5 +23,12 @@ namespace JumbleCoding
         {
             InitializeComponent();
         }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            GameManager.Initialize(new TimeSpan(0, 1, 0), new Player());
+            (new MainWindow()).Show();
+            this.Close();
+        }
     }
 }
