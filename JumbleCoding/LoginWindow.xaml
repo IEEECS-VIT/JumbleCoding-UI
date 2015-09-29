@@ -32,19 +32,12 @@
                         </BulletDecorator>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-                <clr:String>There are two rounds in this event.</clr:String>
-                <clr:String>You have a time limit to complete the code.</clr:String>
-                <clr:String>There are two rounds in this event.</clr:String>
-                <clr:String>You have a time limit to complete the code.</clr:String>
-                <clr:String>There are two rounds in this event.</clr:String>
-                <clr:String>You have a time limit to complete the code.</clr:String>
-                <clr:String>There are two rounds in this event.</clr:String>
-                <clr:String>You have a time limit to complete the code.</clr:String>
-                <clr:String>There are two rounds in this event.</clr:String>
-                <clr:String>You have a time limit to complete the code.</clr:String>
-                <clr:String>There are two rounds in this event.</clr:String>
-                <clr:String>You have a time limit to complete the code.</clr:String>
-                <clr:String>There are two rounds in this event.</clr:String>
+                <clr:String>Each round is of 45 minutes.</clr:String>
+                <clr:String>The keys of the keyboard are jumbled up according to a particular algorithm. You have to solve the coding question after detecting the mapping of the keys.</clr:String>
+                <clr:String>Points will be alloted based according to the time taken to solve the problem. The one who takes less time gets more points.</clr:String>
+                <clr:String>The code cannot be compiled using this software and can only be submitted so do check for any syntax errors beforehand.</clr:String>
+                <clr:String>Click on the submit button only if you are done checking your code as you cannot attemp it again. If you run out of time code will be automatically submitted.</clr:String>
+                <clr:String>In case of any dispute, the event coordinator's decision shall hold.</clr:String>
             </ItemsControl>
         </ScrollViewer>
 

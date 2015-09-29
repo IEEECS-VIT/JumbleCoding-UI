@@ -43,7 +43,7 @@
 
             <TextBlock Grid.Row="0" Foreground="Gray">
             Logged in as:<LineBreak></LineBreak>
-            <Run Text="{Binding CurrentPlayerId}" FontWeight="Bold" Foreground="Black" FontSize="17"></Run>
+            <Run Text="{Binding CurrentPlayerId, Mode=OneTime}" FontWeight="Bold" Foreground="Black" FontSize="17"></Run>
             </TextBlock>
             <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
             <TextBlock Foreground="Gray" FontSize="10" VerticalAlignment="Center" TextAlignment="Right">
@@ -64,14 +64,20 @@
                            HorizontalAlignment="Center" FontWeight="Bold"></TextBlock>
                 </Grid>
             </StackPanel>
-            <ScrollViewer Grid.Row="2" Margin="0,20,15,20" x:Name="inputScrollViewer"
-                          ScrollChanged="ScrollViewer_ScrollChanged">
-                <TextBox x:Name="inputTextBox" TextChanged="InputTextBox_TextChanged"></TextBox>
-            </ScrollViewer>
             <ScrollViewer Grid.Row="2" Grid.Column="1" Margin="15,20,0,20" x:Name="displayScrollViewer"
-                          ScrollChanged="ScrollViewer_ScrollChanged">
+                          ScrollChanged="ScrollViewer_ScrollChanged" Visibility="Hidden">
                 <TextBox x:Name="displayTextBox" IsReadOnly="True" Background="#FFE1E1E1"
                          IsTabStop="False" IsHitTestVisible="False">
+                </TextBox>
+            </ScrollViewer>
+            <ScrollViewer Grid.Row="2" Margin="0,20,15,20" x:Name="inputScrollViewer"
+                          ScrollChanged="ScrollViewer_ScrollChanged" Grid.ColumnSpan="2">
+                <TextBox x:Name="inputTextBox" PreviewKeyDown="inputTextBox_PreviewKeyDown">
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <AccessText Text="No copy/paste!"></AccessText>
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
                 </TextBox>
             </ScrollViewer>
             <StackPanel Orientation="Horizontal" Grid.Row="3">

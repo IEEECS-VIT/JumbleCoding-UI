@@ -26,6 +26,7 @@ namespace JumbleCoding
         private DispatcherTimer Timer { get; set; }
         private TimeSpan RemainingTime { get; set; }
         private double _increment;
+        private string lastText = "";
 
         public string CurrentPlayerId { get; private set; }
 
@@ -45,6 +46,9 @@ namespace JumbleCoding
 
             this.DataContext = this;
             Manager.PushToLog(LogEvents.GameStart, GameSession.RoundDetails.RoundNo.ToString());
+
+            CommandManager.AddPreviewExecutedHandler(inputTextBox, HandleCommandExecution);
+            lastText = inputTextBox.Text;
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -72,9 +76,10 @@ namespace JumbleCoding
                 inputScrollViewer.ScrollToVerticalOffset(displayScrollViewer.ContentVerticalOffset);
         }
 
-        private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void HandleCommandExecution(object sender, ExecutedRoutedEventArgs e)
         {
-            displayTextBox.Text = GameSession.RoundDetails.Jumbler(inputTextBox.Text);
+            if (e.Command == ApplicationCommands.Cut || e.Command == ApplicationCommands.Copy || e.Command == ApplicationCommands.Paste)
+                e.Handled = true;
         }
 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
@@ -92,8 +97,8 @@ namespace JumbleCoding
 
             try
             {
-                Manager.PushToLog(LogEvents.Submit, displayTextBox.Text);
-                string submission = GameSession.EndRound(displayTextBox.Text, RemainingTime);
+                Manager.PushToLog(LogEvents.Submit, inputTextBox.Text);
+                string submission = GameSession.EndRound(inputTextBox.Text, RemainingTime);
                 // Upload submission via FTP.
                 submitStatusBlock.Foreground = new SolidColorBrush(Colors.LightGreen);
                 submitStatusBlock.Text = "Submission successful.";
@@ -106,6 +111,59 @@ namespace JumbleCoding
             finally
             {
                 submissionProgressBar.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void inputTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.Key == Key.A) || (e.Key == Key.B) || (e.Key == Key.C) || (e.Key == Key.D) || (e.Key == Key.E) || (e.Key == Key.F) || (e.Key == Key.G) || (e.Key == Key.H) || (e.Key == Key.I) || (e.Key == Key.J) || (e.Key == Key.K) || (e.Key == Key.L) || (e.Key == Key.M) || (e.Key == Key.N) || (e.Key == Key.O) || (e.Key == Key.P) || (e.Key == Key.Q) || (e.Key == Key.R) || (e.Key == Key.S) || (e.Key == Key.T) || (e.Key == Key.U) || (e.Key == Key.V) || (e.Key == Key.W) || (e.Key == Key.X) || (e.Key == Key.Y) || (e.Key == Key.Z))
+            {
+                bool isCaps = false;
+                if ((Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) ^ Keyboard.IsKeyToggled(Key.CapsLock))
+                {
+                    isCaps = true;
+                }
+                char x = '\0';
+                switch (e.Key)
+                {
+                    case Key.A: x = 'A'; break;
+                    case Key.B: x = 'B'; break;
+                    case Key.C: x = 'C'; break;
+                    case Key.D: x = 'D'; break;
+                    case Key.E: x = 'E'; break;
+                    case Key.F: x = 'F'; break;
+                    case Key.G: x = 'G'; break;
+                    case Key.H: x = 'H'; break;
+                    case Key.I: x = 'I'; break;
+                    case Key.J: x = 'J'; break;
+                    case Key.K: x = 'K'; break;
+                    case Key.L: x = 'L'; break;
+                    case Key.M: x = 'M'; break;
+                    case Key.N: x = 'N'; break;
+                    case Key.O: x = 'O'; break;
+                    case Key.P: x = 'P'; break;
+                    case Key.Q: x = 'Q'; break;
+                    case Key.R: x = 'R'; break;
+                    case Key.S: x = 'S'; break;
+                    case Key.T: x = 'T'; break;
+                    case Key.U: x = 'U'; break;
+                    case Key.V: x = 'V'; break;
+                    case Key.W: x = 'W'; break;
+                    case Key.X: x = 'X'; break;
+                    case Key.Y: x = 'Y'; break;
+                    case Key.Z: x = 'Z'; break;
+                }
+
+                char output = GameSession.RoundDetails.Jumble(x);
+                if (isCaps == false)
+                    output = char.ToLower(output);
+                else
+                    output = char.ToUpper(output);
+                var text = new string(new char[] { output });
+                var target = Keyboard.FocusedElement;
+                var routedEvent = TextCompositionManager.TextInputEvent;
+                target.RaiseEvent(new TextCompositionEventArgs(InputManager.Current.PrimaryKeyboardDevice, new TextComposition(InputManager.Current, target, text)) { RoutedEvent = routedEvent });
+                e.Handled = true;
             }
         }
 

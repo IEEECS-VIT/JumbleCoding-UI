@@ -33,7 +33,7 @@ namespace JumbleCoding
             set
             {
                 _regNoInputStatus = value;
-                NotifyPropertyChanged();
+                NotifyPropertyChanged("RegNoInputStatus");
             }
         }
         public string PasswordInputStatus
@@ -42,7 +42,7 @@ namespace JumbleCoding
             set
             {
                 _passwordInputStatus = value;
-                NotifyPropertyChanged();
+                NotifyPropertyChanged("PasswordInputStatus");
             }
         }
 
@@ -102,7 +102,7 @@ namespace JumbleCoding
             return true;
         }
 
-        public void NotifyPropertyChanged([CallerMemberName]string propertyName = null)
+        public void NotifyPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
